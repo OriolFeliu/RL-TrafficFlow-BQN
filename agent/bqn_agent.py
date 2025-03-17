@@ -1,8 +1,8 @@
 import random
 import numpy as np
 import torch
-from agent_models import BQN
-from base_agent import BaseAgent
+from agent.agent_models import BQN
+from agent.base_agent import BaseAgent
 import torch.optim as optim
 import torch.nn as nn
 

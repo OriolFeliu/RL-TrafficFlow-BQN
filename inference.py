@@ -7,8 +7,8 @@ from config import ENV, TRAINING
 from sumolib import checkBinary
 
 from env import Environment
-from bqn_agent import BQNAgent
-from replay_buffer import ReplayBuffer
+from agent.bqn_agent import BQNAgent
+from agent.replay_buffer import ReplayBuffer
 
 if __name__ == '__main__':
     SEED = 1234
@@ -41,7 +41,7 @@ if __name__ == '__main__':
                       GREEN_DURATION, YELLOW_DURATION)
     agent = BQNAgent(STATE_SIZE, ACTION_SIZE, N_INTERSECTIONS)
 
-    model_path = f'bqn_{N_EPISODES}_model.pth'
+    model_path = f'model/bqn_{N_EPISODES}_model.pth'
     agent.load_model(model_path)
 
     total_queue_lengths = []

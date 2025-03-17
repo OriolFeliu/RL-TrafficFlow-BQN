@@ -4,9 +4,9 @@ import numpy as np
 import random
 import matplotlib.pyplot as plt
 from sumolib import checkBinary
-from bqn_agent import BQNAgent
+from agent.bqn_agent import BQNAgent
 from env import Environment
-from replay_buffer import ReplayBuffer
+from agent.replay_buffer import ReplayBuffer
 from config import TRAINING, ENV
 
 if __name__ == '__main__':
@@ -99,7 +99,7 @@ if __name__ == '__main__':
         )
 
     # Save model and plot results
-    torch.save(agent.model.state_dict(), f'bqn_{N_EPISODES}_model.pth')
+    torch.save(agent.model.state_dict(), f'model/bqn_{N_EPISODES}_model.pth')
 
     plt.figure(figsize=(10, 6))
     plt.plot(total_losses, label='Loss')
