@@ -40,18 +40,20 @@ class BQNAgent(BaseAgent):
     def act(self, state):
         # Epsilon-greedy action selection
         if random.random() < self.epsilon:
-            return random.randrange(self.action_size)
+            return [random.randrange(self.action_size)
+                    for _ in range(self.n_branches)]
+
         state_tensor = torch.FloatTensor(state).unsqueeze(0).to(self.device)
         with torch.no_grad():
             q_branches = self.model(state_tensor)
-        return int(torch.argmax(q_branches).item())
+        return [int(torch.argmax(q_branch).item()) for q_branch in q_branches]
 
     def train(self, batch):
         states, actions, rewards, next_states, dones = batch
 
         # Transform to torch tensors
         states = torch.FloatTensor(states).to(self.device)
-        actions = torch.LongTensor(actions).unsqueeze(1).to(self.device)
+        # actions = torch.LongTensor(actions).unsqueeze(1).to(self.device)
         rewards = torch.FloatTensor(rewards).unsqueeze(1).to(self.device)
         next_states = torch.FloatTensor(next_states).to(self.device)
         dones = torch.FloatTensor(dones).unsqueeze(1).to(self.device)
@@ -71,6 +73,7 @@ class BQNAgent(BaseAgent):
         loss = 0
         for branch in range(self.n_branches):
             action_branch = actions[branch]
+            action_branch = torch.LongTensor(action_branch).unsqueeze(1).to(self.device)
             q_values = q_branches[branch].gather(1, action_branch)
 
             with torch.no_grad():

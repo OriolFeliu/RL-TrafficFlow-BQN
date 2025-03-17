@@ -3,11 +3,9 @@ import torch
 import numpy as np
 import random
 import matplotlib.pyplot as plt
+from config import ENV, TRAINING
 from sumolib import checkBinary
-
 from env import Environment
-from dqn_agent import DQNAgent
-from replay_buffer import ReplayBuffer
 
 if __name__ == '__main__':
     SEED = 1234
@@ -18,12 +16,14 @@ if __name__ == '__main__':
 
     print('CYCLIC SIMULATION')
 
-    MAX_STEPS = 5400
-    N_CARS = 200
-    GREEN_DURATION = 40
-    YELLOW_DURATION = 5
+    # HYPERPARAMETHERS
+    MAX_STEPS = TRAINING["max_steps"]
+    N_CARS = TRAINING["n_cars"]
+    GREEN_DURATION = ENV["green_duration"]
+    YELLOW_DURATION = ENV["yellow_duration"]
+    N_INTERSECTIONS = ENV['n_branches']
 
-    sumoBinary = checkBinary('sumo')
+    sumoBinary = checkBinary('sumo-gui')
     sumo_cmd = [
         sumoBinary,
         '-c', os.path.join('data', 'cfg', 'sumo_config.sumocfg'),
@@ -31,8 +31,8 @@ if __name__ == '__main__':
         '--waiting-time-memory', str(MAX_STEPS)
     ]
 
-    env = Environment(sumo_cmd,
-                      MAX_STEPS, N_CARS, GREEN_DURATION, YELLOW_DURATION)
+    env = Environment(sumo_cmd, MAX_STEPS, N_INTERSECTIONS,
+                      N_CARS, GREEN_DURATION, YELLOW_DURATION)
     env.reset()
 
     total_queue_lengths = []
@@ -41,7 +41,7 @@ if __name__ == '__main__':
 
     while not done:
         # Get action and step environment
-        next_state, reward, done = env.step(None)
+        next_state, _, done = env.step_cyclic_sim(None)
 
         # Update state and reward
         state = next_state
@@ -73,7 +73,7 @@ if __name__ == '__main__':
     ax2.tick_params(axis='y', labelcolor='red')
 
     # Title and grid
-    plt.title('Trained DQN Simulation')
+    plt.title('Cyclic Simulation')
     fig.tight_layout()
 
     plt.show()

@@ -3,10 +3,11 @@ import torch
 import numpy as np
 import random
 import matplotlib.pyplot as plt
+from config import ENV, TRAINING
 from sumolib import checkBinary
 
 from env import Environment
-from dqn_agent import DQNAgent
+from bqn_agent import BQNAgent
 from replay_buffer import ReplayBuffer
 
 if __name__ == '__main__':
@@ -19,15 +20,14 @@ if __name__ == '__main__':
     print('INFERENCE SIMULATION')
 
     # Hyperparameters
-    N_EPISODES = 50
-    MAX_STEPS = 5400
-    N_CARS = 200
-
-    STATE_SIZE = 16
-    ACTION_SIZE = 4
-
-    GREEN_DURATION = 40
-    YELLOW_DURATION = 5
+    N_EPISODES = TRAINING['n_episodes']
+    MAX_STEPS = TRAINING['max_steps']
+    N_CARS = TRAINING['n_cars']
+    STATE_SIZE = ENV['state_size']
+    ACTION_SIZE = ENV['action_size']
+    GREEN_DURATION = ENV['green_duration']
+    YELLOW_DURATION = ENV['yellow_duration']
+    N_INTERSECTIONS = ENV['n_branches']
 
     sumoBinary = checkBinary('sumo-gui')
     sumo_cmd = [
@@ -37,11 +37,11 @@ if __name__ == '__main__':
         '--waiting-time-memory', str(MAX_STEPS)
     ]
 
-    env = Environment(sumo_cmd, MAX_STEPS, N_CARS,
+    env = Environment(sumo_cmd, MAX_STEPS, N_INTERSECTIONS, N_CARS,
                       GREEN_DURATION, YELLOW_DURATION)
-    agent = DQNAgent(STATE_SIZE, ACTION_SIZE)
+    agent = BQNAgent(STATE_SIZE, ACTION_SIZE, N_INTERSECTIONS)
 
-    model_path = f'dqn_{N_EPISODES}_model.pth'
+    model_path = f'bqn_{N_EPISODES}_model.pth'
     agent.load_model(model_path)
 
     total_queue_lengths = []
@@ -86,7 +86,7 @@ if __name__ == '__main__':
     ax2.tick_params(axis='y', labelcolor='red')
 
     # Title and grid
-    plt.title('Trained DQN Simulation')
+    plt.title('Trained BQN Simulation')
     fig.tight_layout()
 
     plt.show()

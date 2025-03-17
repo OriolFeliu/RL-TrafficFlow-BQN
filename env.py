@@ -5,7 +5,6 @@ import random
 import timeit
 import os
 import math
-from env import Environment
 
 # phase codes based on environment.net.xml
 PHASE_NS_GREEN = 0  # action 0 code 00
@@ -18,22 +17,53 @@ PHASE_EWL_GREEN = 6  # action 3 code 11
 PHASE_EWL_YELLOW = 7
 
 
-class Environment_BQN(Environment):
-    def __init__(self, sumo_cmd, max_steps, n_cars, green_duration, yellow_duration, n_branches):
-        super().__init__(sumo_cmd, max_steps, n_cars, green_duration, yellow_duration)
+class Environment:
+    def __init__(self, sumo_cmd, max_steps, n_branches, n_cars, green_duration, yellow_duration):
+        self.n_cars = n_cars
+        self.sumo_cmd = sumo_cmd
+        self.max_steps = max_steps
         self.n_branches = n_branches
 
-    # def reset(self):
-    #     pass
+        self.done = False
+        self.current_step = 0
+        self.total_arrived_vehicles = 0
+
+        self.current_phase = None
+        self.steps_in_current_phase = 0
+        self.green_duration = green_duration
+        self.yellow_duration = yellow_duration
+        self.old_action = [-1] * self.n_branches
+
+    def reset(self):
+        self.done = False
+        self.current_step = 0
+        self.total_arrived_vehicles = 0
+        self.old_action = [-1] * self.n_branches
+
+        self.generate_routefile()
+        traci.start(self.sumo_cmd)
+
+        all_lanes = traci.lane.getIDList()
+        # Filter lanes starting with 'TL' (outgoing from the junction)
+        # ['E2TL_0', 'E2TL_1', 'E2TL_2', 'E2TL_3', 'N2TL_0', 'N2TL_1', 'N2TL_2', 'N2TL_3', 'S2TL_0', 'S2TL_1', 'S2TL_2', 'S2TL_3', 'W2TL_0', 'W2TL_1', 'W2TL_2', 'W2TL_3']
+        self.incoming_lanes = [lane for lane in all_lanes
+                               if not lane.startswith(':TL') and not lane.startswith('TL')]
+
+        state = self.get_queue_length_state()
+
+        self.current_phase = None
+        self.steps_in_current_phase = 0
+
+        return state
 
     def step(self, action):
-        for branch in self.n_branches:
+        for branch in range(self.n_branches):
             action_branch = action[branch]
-            if self.current_step != 0 and self.old_action != action_branch:
-                self.set_yellow_phase()
+            if self.current_step != 0 and self.old_action[branch] != action_branch:
+                self.set_yellow_phase(branch)
                 self.done = self.run_simulation_steps(self.yellow_duration)
 
-            self.old_action_branch = action_branch
+            self.old_action[branch] = action_branch
 
             if not self.done:
                 self.set_green_phase(action_branch)
@@ -67,9 +97,10 @@ class Environment_BQN(Environment):
                 total_waiting_time += traci.vehicle.getWaitingTime(veh_id)
 
         return -total_waiting_time
-    
+
     def get_queue_length_waiting_time_reward(self):
-        reward = self.get_queue_length_reward() * self.get_queue_waiting_time_reward() # can use exponential to emphasize time
+        # can use exp to emphasize time
+        reward = self.get_queue_length_reward() * self.get_queue_waiting_time_reward()
 
         return -reward
 
@@ -90,14 +121,14 @@ class Environment_BQN(Environment):
         elif action == 3:
             traci.trafficlight.setPhase("TL", PHASE_EWL_GREEN)
 
-    def set_yellow_phase(self):
-        if self.old_action == 0:
+    def set_yellow_phase(self, branch):
+        if self.old_action[branch] == 0:
             traci.trafficlight.setPhase("TL", PHASE_NS_YELLOW)
-        elif self.old_action == 1:
+        elif self.old_action[branch] == 1:
             traci.trafficlight.setPhase("TL", PHASE_NSL_YELLOW)
-        elif self.old_action == 2:
+        elif self.old_action[branch] == 2:
             traci.trafficlight.setPhase("TL", PHASE_EW_YELLOW)
-        elif self.old_action == 3:
+        elif self.old_action[branch] == 3:
             traci.trafficlight.setPhase("TL", PHASE_EWL_YELLOW)
 
     def run_simulation_steps(self, n_steps):
@@ -223,3 +254,17 @@ class Environment_BQN(Environment):
                               (car_counter, step), file=routes)
 
             print("</routes>", file=routes)
+
+    def step_cyclic_sim(self, action):
+        traci.simulationStep()
+        self.total_arrived_vehicles += traci.simulation.getArrivedNumber()
+        self.current_step += 1
+
+        next_state = self.get_queue_length_state()
+
+        self.done = (self.current_step >= self.max_steps) or (
+            self.total_arrived_vehicles >= self.n_cars)
+        if self.done:
+            traci.close()
+
+        return next_state, None, self.done

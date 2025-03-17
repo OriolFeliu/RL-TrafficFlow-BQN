@@ -1,5 +1,5 @@
 TRAINING = {
-    'n_episodes': 200,
+    'n_episodes': 50,
     'max_steps': 5400,
     'batch_size': 64,
     'hidden_size': 64,
@@ -10,12 +10,13 @@ TRAINING = {
     'n_cars': 200,
     'epsilon_start': 1.0,
     'epsilon_end': 0.1,
-    'epsilon_decay': 0.995
+    'epsilon_decay': 0.994
 }
 
 ENV = {
     'state_size': 16,
     'action_size': 4,
     'green_duration': 10,
-    'yellow_duration': 2
+    'yellow_duration': 2,
+    'n_branches': 1
 }

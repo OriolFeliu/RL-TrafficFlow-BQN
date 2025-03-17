@@ -3,11 +3,9 @@ import torch
 import numpy as np
 import random
 import matplotlib.pyplot as plt
-from bqn_agent import BQNAgent
 from sumolib import checkBinary
-
+from bqn_agent import BQNAgent
 from env import Environment
-from dqn_agent import DQNAgent
 from replay_buffer import ReplayBuffer
 from config import TRAINING, ENV
 
@@ -42,7 +40,7 @@ if __name__ == '__main__':
     GREEN_DURATION = ENV["green_duration"]
     YELLOW_DURATION = ENV["yellow_duration"]
 
-    N_INTERSECTIONS = 1
+    N_INTERSECTIONS = ENV['n_branches']
 
     sumoBinary = checkBinary('sumo')
     sumo_cmd = [
@@ -52,13 +50,11 @@ if __name__ == '__main__':
         '--waiting-time-memory', str(MAX_STEPS)
     ]
 
-    env = Environment(sumo_cmd, MAX_STEPS, N_CARS,
+    env = Environment(sumo_cmd, MAX_STEPS, N_INTERSECTIONS, N_CARS,
                       GREEN_DURATION, YELLOW_DURATION)
-    # agent = DQNAgent(STATE_SIZE, ACTION_SIZE, EPSILON_START,
-    #                  EPSILON_END, EPSILON_DECAY, HIDDEN_SIZE, LR, GAMMA)
     agent = BQNAgent(STATE_SIZE, ACTION_SIZE, N_INTERSECTIONS, EPSILON_START,
                      EPSILON_END, EPSILON_DECAY, HIDDEN_SIZE, LR, GAMMA)
-    replay_buffer = ReplayBuffer(BUFFER_SIZE)
+    replay_buffer = ReplayBuffer(N_INTERSECTIONS, BUFFER_SIZE)
 
     total_rewards = []
     total_losses = []
@@ -103,13 +99,13 @@ if __name__ == '__main__':
         )
 
     # Save model and plot results
-    torch.save(agent.model.state_dict(), f'dqn_{N_EPISODES}_model.pth')
+    torch.save(agent.model.state_dict(), f'bqn_{N_EPISODES}_model.pth')
 
     plt.figure(figsize=(10, 6))
     plt.plot(total_losses, label='Loss')
     plt.xlabel('Training Steps')
     plt.ylabel('Loss')
-    plt.title('DQN Training Loss')
+    plt.title('BQN Training Loss')
     plt.legend()
     plt.show()
 
