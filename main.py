@@ -39,8 +39,8 @@ if __name__ == '__main__':
     ACTION_SIZE = ENV["action_size"]
     GREEN_DURATION = ENV["green_duration"]
     YELLOW_DURATION = ENV["yellow_duration"]
-
     N_INTERSECTIONS = ENV['n_branches']
+    MAP_NAME = ENV['map_name']
 
     sumoBinary = checkBinary('sumo')
     sumo_cmd = [
@@ -51,7 +51,7 @@ if __name__ == '__main__':
     ]
 
     env = Environment(sumo_cmd, MAX_STEPS, N_INTERSECTIONS, N_CARS,
-                      GREEN_DURATION, YELLOW_DURATION)
+                      GREEN_DURATION, YELLOW_DURATION, MAP_NAME)
     agent = BQNAgent(STATE_SIZE, ACTION_SIZE, N_INTERSECTIONS, EPSILON_START,
                      EPSILON_END, EPSILON_DECAY, HIDDEN_SIZE, LR, GAMMA)
     replay_buffer = ReplayBuffer(N_INTERSECTIONS, BUFFER_SIZE)

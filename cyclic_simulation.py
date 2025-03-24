@@ -22,6 +22,7 @@ if __name__ == '__main__':
     GREEN_DURATION = ENV["green_duration"]
     YELLOW_DURATION = ENV["yellow_duration"]
     N_INTERSECTIONS = ENV['n_branches']
+    MAP_NAME = ENV['map_name']
 
     sumoBinary = checkBinary('sumo-gui')
     sumo_cmd = [
@@ -32,7 +33,7 @@ if __name__ == '__main__':
     ]
 
     env = Environment(sumo_cmd, MAX_STEPS, N_INTERSECTIONS,
-                      N_CARS, GREEN_DURATION, YELLOW_DURATION)
+                      N_CARS, GREEN_DURATION, YELLOW_DURATION, MAP_NAME)
     env.reset()
 
     total_queue_lengths = []

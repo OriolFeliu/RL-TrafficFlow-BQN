@@ -58,13 +58,19 @@ class BQNAgent(BaseAgent):
         next_states = torch.FloatTensor(next_states).to(self.device)
         dones = torch.FloatTensor(dones).unsqueeze(1).to(self.device)
 
-        # # Current Q values for the taken actions
+        ####################
+
         # q_values = self.model(states).gather(1, actions)
+
         # # Next Q values from target network (detach to avoid gradient flow)
         # next_q_values = self.target_model(
         #     next_states).detach().max(dim=1, keepdim=True)[0]
         # # Compute target Q values using the Bellman equation
         # target = rewards + (1 - dones) * self.gamma * next_q_values
+
+        # loss = self.criterion(q_values, target)
+
+        ####################
 
         ###################
         q_branches = self.model(states)
@@ -73,7 +79,8 @@ class BQNAgent(BaseAgent):
         loss = 0
         for branch in range(self.n_branches):
             action_branch = actions[branch]
-            action_branch = torch.LongTensor(action_branch).unsqueeze(1).to(self.device)
+            action_branch = torch.LongTensor(
+                action_branch).unsqueeze(1).to(self.device)
             q_values = q_branches[branch].gather(1, action_branch)
 
             with torch.no_grad():
@@ -83,8 +90,6 @@ class BQNAgent(BaseAgent):
             loss += self.criterion(q_values, q_targets)
 
         ###############################
-
-        # loss = self.criterion(q_values, target)
 
         self.optimizer.zero_grad()
         loss.backward()
