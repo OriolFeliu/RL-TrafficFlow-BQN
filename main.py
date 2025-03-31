@@ -8,6 +8,7 @@ from agent.bqn_agent import BQNAgent
 from env import Environment
 from agent.replay_buffer import ReplayBuffer
 from config import TRAINING, ENV
+import time
 
 if __name__ == '__main__':
     SEED = 1234
@@ -59,6 +60,8 @@ if __name__ == '__main__':
     total_rewards = []
     total_losses = []
 
+    start_time = time.time()
+
     for episode in range(N_EPISODES):
         state = env.reset()
         episode_reward = 0
@@ -68,6 +71,7 @@ if __name__ == '__main__':
         while not done:
             # Get action and step environment
             action = agent.act(state)
+            # action = [0, 0, 0, 0]
             next_state, reward, done = env.step(action)
 
             # Store experience
@@ -98,8 +102,13 @@ if __name__ == '__main__':
             f'Episode: {episode+1}, Reward: {episode_reward}, Avg Reward: {avg_reward:.2f}, Arrived vehicles: {env.total_arrived_vehicles}, Epsilon: {agent.epsilon:.2f}'
         )
 
+    end_time = time.time()
+    total_time = end_time - start_time
+    print(f'Total training time: {total_time / 60} minutes')
+
     # Save model and plot results
-    torch.save(agent.model.state_dict(), f'model/bqn_{N_EPISODES}_model.pth')
+    torch.save(agent.model.state_dict(),
+               f'model/bqn_{N_INTERSECTIONS}inter_{N_EPISODES}ep_model.pth')
 
     plt.figure(figsize=(10, 6))
     plt.plot(total_losses, label='Loss')

@@ -342,7 +342,7 @@
         <lane id="D2C2_3" index="3" speed="13.89" length="83.20" shape="300.00,201.60 216.80,201.60"/>
     </edge>
 
-    <tlLogic id="B1" type="static" programID="0" offset="0">
+    <!-- <tlLogic id="B1" type="static" programID="0" offset="0">
         <phase duration="42" state="GGGGGGrrrrrrGGGGGGrrrrrr"/>
         <phase duration="3"  state="yyyyyyrrrrrryyyyyyrrrrrr"/>
         <phase duration="42" state="rrrrrrGGGGGGrrrrrrGGGGGG"/>
@@ -365,6 +365,31 @@
         <phase duration="3"  state="yyyyyyrrrrrryyyyyyrrrrrr"/>
         <phase duration="42" state="rrrrrrGGGGGGrrrrrrGGGGGG"/>
         <phase duration="3"  state="rrrrrryyyyyyrrrrrryyyyyy"/>
+    </tlLogic> -->
+
+    <tlLogic id="B1" type="static" programID="0" offset="0">
+        <phase duration="500" state="GGGGGGrrrrrrGGGGGGrrrrrr"/>
+        <phase duration="500"  state="yyyyyyrrrrrryyyyyyrrrrrr"/>
+        <phase duration="500" state="rrrrrrGGGGGGrrrrrrGGGGGG"/>
+        <phase duration="500"  state="rrrrrryyyyyyrrrrrryyyyyy"/>
+    </tlLogic>
+    <tlLogic id="B2" type="static" programID="0" offset="0">
+        <phase duration="500" state="GGGGGGrrrrrrGGGGGGrrrrrr"/>
+        <phase duration="500"  state="yyyyyyrrrrrryyyyyyrrrrrr"/>
+        <phase duration="500" state="rrrrrrGGGGGGrrrrrrGGGGGG"/>
+        <phase duration="500"  state="rrrrrryyyyyyrrrrrryyyyyy"/>
+    </tlLogic>
+    <tlLogic id="C1" type="static" programID="0" offset="0">
+        <phase duration="500" state="GGGGGGrrrrrrGGGGGGrrrrrr"/>
+        <phase duration="500"  state="yyyyyyrrrrrryyyyyyrrrrrr"/>
+        <phase duration="500" state="rrrrrrGGGGGGrrrrrrGGGGGG"/>
+        <phase duration="500"  state="rrrrrryyyyyyrrrrrryyyyyy"/>
+    </tlLogic>
+    <tlLogic id="C2" type="static" programID="0" offset="0">
+        <phase duration="500" state="GGGGGGrrrrrrGGGGGGrrrrrr"/>
+        <phase duration="500"  state="yyyyyyrrrrrryyyyyyrrrrrr"/>
+        <phase duration="500" state="rrrrrrGGGGGGrrrrrrGGGGGG"/>
+        <phase duration="500"  state="rrrrrryyyyyyrrrrrryyyyyy"/>
     </tlLogic>
 
     <junction id="A1" type="dead_end" x="0.00" y="100.00" incLanes="B1A1_0 B1A1_1 B1A1_2 B1A1_3" intLanes="" shape="0.00,100.00 0.00,112.80 0.00,100.00"/>

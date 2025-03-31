@@ -31,7 +31,7 @@ class ReplayBuffer:
         branch_actions = np.full((self.n_branches, batch_size), -1)
         for i in range(self.n_branches):
             for j in range(batch_size):
-                branch_actions[i, j] = actions_array[j]
+                branch_actions[i, j] = actions_array[j, i]
 
         rewards = np.array(rewards, dtype=np.float32)   # shape: (batch_size,)
         dones = np.array(dones, dtype=np.bool_)           # shape: (batch_size,)

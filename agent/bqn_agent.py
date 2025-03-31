@@ -11,7 +11,6 @@ class BQNAgent(BaseAgent):
     def __init__(self,  state_size, action_size, n_branches, epsilon_start=1.0, epsilon_end=0.01, epsilon_decay=0.995, hidden_size=64, lr=1e-3, gamma=0.9):
         super().__init__()
 
-        self.state_size = state_size
         self.action_size = action_size
         self.gamma = gamma
         self.device = torch.device(
@@ -24,6 +23,7 @@ class BQNAgent(BaseAgent):
         self.epsilon_decay = epsilon_decay
 
         # Q-Network and target network
+        state_size = state_size * n_branches
         self.model = BQN(state_size, action_size, n_branches,
                          hidden_size).to(self.device)
         self.target_model = BQN(state_size, action_size, n_branches,
@@ -52,27 +52,14 @@ class BQNAgent(BaseAgent):
         states, actions, rewards, next_states, dones = batch
 
         # Transform to torch tensors
+        # states = torch.FloatTensor(states).squeeze(1).to(self.device)
         states = torch.FloatTensor(states).to(self.device)
         # actions = torch.LongTensor(actions).unsqueeze(1).to(self.device)
         rewards = torch.FloatTensor(rewards).unsqueeze(1).to(self.device)
+        # next_states = torch.FloatTensor(next_states).squeeze(1).to(self.device)
         next_states = torch.FloatTensor(next_states).to(self.device)
         dones = torch.FloatTensor(dones).unsqueeze(1).to(self.device)
 
-        ####################
-
-        # q_values = self.model(states).gather(1, actions)
-
-        # # Next Q values from target network (detach to avoid gradient flow)
-        # next_q_values = self.target_model(
-        #     next_states).detach().max(dim=1, keepdim=True)[0]
-        # # Compute target Q values using the Bellman equation
-        # target = rewards + (1 - dones) * self.gamma * next_q_values
-
-        # loss = self.criterion(q_values, target)
-
-        ####################
-
-        ###################
         q_branches = self.model(states)
         next_q_branches = self.target_model(next_states)
 
@@ -88,8 +75,6 @@ class BQNAgent(BaseAgent):
                 q_targets = rewards + self.gamma * (1 - dones) * next_q_values
 
             loss += self.criterion(q_values, q_targets)
-
-        ###############################
 
         self.optimizer.zero_grad()
         loss.backward()

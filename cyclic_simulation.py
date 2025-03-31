@@ -24,7 +24,9 @@ if __name__ == '__main__':
     N_INTERSECTIONS = ENV['n_branches']
     MAP_NAME = ENV['map_name']
 
-    sumoBinary = checkBinary('sumo-gui')
+    n_simulations = 10
+
+    sumoBinary = checkBinary('sumo')
     sumo_cmd = [
         sumoBinary,
         '-c', os.path.join('data', 'cfg', 'sumo_config.sumocfg'),
@@ -34,22 +36,25 @@ if __name__ == '__main__':
 
     env = Environment(sumo_cmd, MAX_STEPS, N_INTERSECTIONS,
                       N_CARS, GREEN_DURATION, YELLOW_DURATION, MAP_NAME)
-    env.reset()
+    # env.reset()
 
     total_queue_lengths = []
     total_queue_times = []
-    done = False
 
-    while not done:
-        # Get action and step environment
-        next_state, _, done = env.step_cyclic_sim(None)
+    for simulation in range(n_simulations):
+        env.reset()
+        done = False
 
-        # Update state and reward
-        state = next_state
+        while not done:
+            # Get action and step environment
+            next_state, _, done = env.step_cyclic_sim()
 
-        if not done:
-            total_queue_lengths.append(env.get_queue_length_reward())
-            total_queue_times.append(env.get_queue_waiting_time_reward())
+            # Update state and reward
+            state = next_state
+
+            if not done:
+                total_queue_lengths.append(env.get_queue_length_reward(next_state))
+                total_queue_times.append(env.get_queue_waiting_time_reward())
 
     # Logging
     avg_queue_length = np.mean(total_queue_lengths)
