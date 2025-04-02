@@ -25,7 +25,6 @@ if __name__ == '__main__':
     N_EPISODES = TRAINING["n_episodes"]
     MAX_STEPS = TRAINING["max_steps"]
     BATCH_SIZE = TRAINING["batch_size"]
-    HIDDEN_SIZE = TRAINING["hidden_size"]
     GAMMA = TRAINING["gamma"]
     LR = TRAINING["lr"]
     TARGET_UPDATE = TRAINING["target_update"]
@@ -54,7 +53,7 @@ if __name__ == '__main__':
     env = Environment(sumo_cmd, MAX_STEPS, N_INTERSECTIONS, N_CARS,
                       GREEN_DURATION, YELLOW_DURATION, MAP_NAME)
     agent = BQNAgent(STATE_SIZE, ACTION_SIZE, N_INTERSECTIONS, EPSILON_START,
-                     EPSILON_END, EPSILON_DECAY, HIDDEN_SIZE, LR, GAMMA)
+                     EPSILON_END, EPSILON_DECAY, LR, GAMMA)
     replay_buffer = ReplayBuffer(N_INTERSECTIONS, BUFFER_SIZE)
 
     total_rewards = []

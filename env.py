@@ -56,30 +56,20 @@ class Environment:
         self.generate_routefile()
         traci.start(self.sumo_cmd)
 
-        # all_lanes = traci.lane.getIDList()
-        # Filter lanes starting with 'TL' (outgoing from the junction)
-        # ['E2TL_0', 'E2TL_1', 'E2TL_2', 'E2TL_3', 'N2TL_0', 'N2TL_1', 'N2TL_2', 'N2TL_3', 'S2TL_0', 'S2TL_1', 'S2TL_2', 'S2TL_3', 'W2TL_0', 'W2TL_1', 'W2TL_2', 'W2TL_3']
-        # self.incoming_lanes = [lane for lane in all_lanes
-        #                        if not lane.startswith(':TL') and not lane.startswith('TL')]
-
         if self.first_epoch:
             # Store incoming lane IDs the first epoch
             self.tl_ids = traci.trafficlight.getIDList()
 
             # Store incoming lane IDs the first epoch
-            all_lanes = traci.lane.getIDList()
-            all_lanes = [
-                lane for lane in all_lanes if not lane.startswith(':')]
-            incoming_lanes = []
+            all_edges = traci.edge.getIDList()
+            all_edges = [
+                edge for edge in all_edges if not edge.startswith(':')]
+            incoming_edges = []
             for tl_id in self.tl_ids:
-                # incoming_lanes.append([lane for lane in all_lanes
-                #                        if lane[2:4] == tl_id and '40.00' in lane])
-                # incoming_lanes.append([lane for lane in all_lanes
-                #                        if not lane.startswith(tl_id) and tl_id in lane])
-                incoming_lanes.append([lane for lane in all_lanes
-                                       if tl_id == lane[2:4]])
+                incoming_edges.append([edge for edge in all_edges
+                                       if tl_id == edge[2:4]])
 
-            self.incoming_lanes = incoming_lanes
+            self.incoming_edges = incoming_edges
 
             self.first_epoch = False
 
@@ -158,16 +148,16 @@ class Environment:
         return -reward
 
     def get_queue_length_state(self):
-        n_lanes = len(self.incoming_lanes[0])
+        n_edges = len(self.incoming_edges[0])
 
         halting_vehicles = np.zeros(
-            (self.n_intersections * n_lanes), dtype=np.int32)
+            (self.n_intersections * n_edges), dtype=np.int32)
 
         for intersection_idx in range(self.n_intersections):
-            for i, lane_id in enumerate(self.incoming_lanes[intersection_idx]):
-                state_idx = intersection_idx * n_lanes + i
+            for i, edge_id in enumerate(self.incoming_edges[intersection_idx]):
+                state_idx = intersection_idx * n_edges + i
                 halting_vehicles[state_idx] = \
-                    traci.lane.getLastStepHaltingNumber(lane_id)
+                    traci.edge.getLastStepHaltingNumber(edge_id)
 
         return halting_vehicles
 
@@ -237,115 +227,6 @@ class Environment:
         # python "C:\Program Files (x86)\Eclipse\Sumo\tools\randomTrips.py" -n "data/network/grid_4inter.net.xml"  -o data/route/randomTrips.rou.xml -e 5400 --seed 1234 --trip-attributes="departSpeed='10.0'"
 
         subprocess.run(command, capture_output=True, text=True)
-
-    # def generate_routefile(self):
-    #     shape_param = 2
-    #     timings = np.random.weibull(shape_param, self.n_cars)
-    #     timings = np.sort(timings)
-
-    #     if self.n_cars == 0:
-    #         return np.array([])
-
-    #     # Find actual min/max of generated data (not using floor/ceiling)
-    #     min_old = timings[0]  # Use first element, not floor(timings[1])
-    #     max_old = timings[-1]
-
-    #     # Handle edge case where all values are identical
-    #     if math.isclose(min_old, max_old, rel_tol=1e-9):
-    #         return np.full(self.n_cars, self.max_steps // 2)
-
-    #     # Linear transformation to [0, max_steps] using vectorization
-    #     car_gen_steps = (timings - min_old) * \
-    #         (self.max_steps / (max_old - min_old))
-
-    #     # Round to integers (use floor() to avoid exceeding max_steps)
-    #     car_gen_steps = np.floor(car_gen_steps).astype(int)
-
-    #     # Clip to ensure values stay within [0, max_steps-1]
-    #     # car_gen_steps = np.clip(car_gen_steps, 0, self.max_steps-1)
-    #     car_gen_steps = np.clip(car_gen_steps, 0, self.max_steps*0.8)
-
-    #     with open("data/route/episode_routes.rou.xml", "w") as routes:
-    #         print("""<routes>
-    #         <vType accel="1.0" decel="4.5" id="standard_car" length="5.0" minGap="2.5" maxSpeed="25" sigma="0.5" />
-
-    #         <route id="W_N" edges="W2TL TL2N"/>
-    #         <route id="W_E" edges="W2TL TL2E"/>
-    #         <route id="W_S" edges="W2TL TL2S"/>
-    #         <route id="N_W" edges="N2TL TL2W"/>
-    #         <route id="N_E" edges="N2TL TL2E"/>
-    #         <route id="N_S" edges="N2TL TL2S"/>
-    #         <route id="E_W" edges="E2TL TL2W"/>
-    #         <route id="E_N" edges="E2TL TL2N"/>
-    #         <route id="E_S" edges="E2TL TL2S"/>
-    #         <route id="S_W" edges="S2TL TL2W"/>
-    #         <route id="S_N" edges="S2TL TL2N"/>
-    #         <route id="S_E" edges="S2TL TL2E"/>""", file=routes)
-
-    #     # produce the file for cars generation, one car per line
-    #     with open("data/route/episode_routes.rou.xml", "w") as routes:
-    #         print("""<routes>
-    #         <vType accel="1.0" decel="4.5" id="standard_car" length="5.0" minGap="2.5" maxSpeed="25" sigma="0.5" />
-
-    #         <route id="W_N" edges="W2TL TL2N"/>
-    #         <route id="W_E" edges="W2TL TL2E"/>
-    #         <route id="W_S" edges="W2TL TL2S"/>
-    #         <route id="N_W" edges="N2TL TL2W"/>
-    #         <route id="N_E" edges="N2TL TL2E"/>
-    #         <route id="N_S" edges="N2TL TL2S"/>
-    #         <route id="E_W" edges="E2TL TL2W"/>
-    #         <route id="E_N" edges="E2TL TL2N"/>
-    #         <route id="E_S" edges="E2TL TL2S"/>
-    #         <route id="S_W" edges="S2TL TL2W"/>
-    #         <route id="S_N" edges="S2TL TL2N"/>
-    #         <route id="S_E" edges="S2TL TL2E"/>""", file=routes)
-
-    #         for car_counter, step in enumerate(car_gen_steps):
-    #             straight_or_turn = np.random.uniform()
-    #             if straight_or_turn < 0.75:  # choose direction: straight or turn - 75% of times the car goes straight
-    #                 # choose a random source & destination
-    #                 route_straight = np.random.randint(1, 5)
-    #                 if route_straight == 1:
-    #                     print('    <vehicle id="W_E_%i" type="standard_car" route="W_E" depart="%s" departLane="random" departSpeed="10" />' %
-    #                           (car_counter, step), file=routes)
-    #                 elif route_straight == 2:
-    #                     print('    <vehicle id="E_W_%i" type="standard_car" route="E_W" depart="%s" departLane="random" departSpeed="10" />' %
-    #                           (car_counter, step), file=routes)
-    #                 elif route_straight == 3:
-    #                     print('    <vehicle id="N_S_%i" type="standard_car" route="N_S" depart="%s" departLane="random" departSpeed="10" />' %
-    #                           (car_counter, step), file=routes)
-    #                 else:
-    #                     print('    <vehicle id="S_N_%i" type="standard_car" route="S_N" depart="%s" departLane="random" departSpeed="10" />' %
-    #                           (car_counter, step), file=routes)
-    #             else:  # car that turn -25% of the time the car turns
-    #                 # choose random source source & destination
-    #                 route_turn = np.random.randint(1, 9)
-    #                 if route_turn == 1:
-    #                     print('    <vehicle id="W_N_%i" type="standard_car" route="W_N" depart="%s" departLane="random" departSpeed="10" />' %
-    #                           (car_counter, step), file=routes)
-    #                 elif route_turn == 2:
-    #                     print('    <vehicle id="W_S_%i" type="standard_car" route="W_S" depart="%s" departLane="random" departSpeed="10" />' %
-    #                           (car_counter, step), file=routes)
-    #                 elif route_turn == 3:
-    #                     print('    <vehicle id="N_W_%i" type="standard_car" route="N_W" depart="%s" departLane="random" departSpeed="10" />' %
-    #                           (car_counter, step), file=routes)
-    #                 elif route_turn == 4:
-    #                     print('    <vehicle id="N_E_%i" type="standard_car" route="N_E" depart="%s" departLane="random" departSpeed="10" />' %
-    #                           (car_counter, step), file=routes)
-    #                 elif route_turn == 5:
-    #                     print('    <vehicle id="E_N_%i" type="standard_car" route="E_N" depart="%s" departLane="random" departSpeed="10" />' %
-    #                           (car_counter, step), file=routes)
-    #                 elif route_turn == 6:
-    #                     print('    <vehicle id="E_S_%i" type="standard_car" route="E_S" depart="%s" departLane="random" departSpeed="10" />' %
-    #                           (car_counter, step), file=routes)
-    #                 elif route_turn == 7:
-    #                     print('    <vehicle id="S_W_%i" type="standard_car" route="S_W" depart="%s" departLane="random" departSpeed="10" />' %
-    #                           (car_counter, step), file=routes)
-    #                 elif route_turn == 8:
-    #                     print('    <vehicle id="S_E_%i" type="standard_car" route="S_E" depart="%s" departLane="random" departSpeed="10" />' %
-    #                           (car_counter, step), file=routes)
-
-    #         print("</routes>", file=routes)
 
     def step_cyclic_sim(self):
         traci.simulationStep()
