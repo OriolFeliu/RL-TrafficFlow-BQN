@@ -126,19 +126,19 @@
         <lane id="C1B1_3" index="3" speed="13.89" length="83.20" shape="200.00,101.60 116.80,101.60"/>
     </edge>
 
-    <tlLogic id="B1" type="static" programID="0" offset="0">
+    <!-- <tlLogic id="B1" type="static" programID="0" offset="0">
         <phase duration="42" state="GGGGGGrrrrrrGGGGGGrrrrrr"/>
         <phase duration="3"  state="yyyyyyrrrrrryyyyyyrrrrrr"/>
         <phase duration="42" state="rrrrrrGGGGGGrrrrrrGGGGGG"/>
         <phase duration="3"  state="rrrrrryyyyyyrrrrrryyyyyy"/>
-    </tlLogic>
-
-    <!-- <tlLogic id="B1" type="static" programID="0" offset="0">
-        <phase duration="500" state="GGGGGGrrrrrrGGGGGGrrrrrr"/>
-        <phase duration="500" state="yyyyyyrrrrrryyyyyyrrrrrr"/>
-        <phase duration="500" state="rrrrrrGGGGGGrrrrrrGGGGGG"/>
-        <phase duration="500" state="rrrrrryyyyyyrrrrrryyyyyy"/>
     </tlLogic> -->
+
+    <tlLogic id="B1" type="static" programID="0" offset="0">
+        <phase duration="5000" state="GGGGGGrrrrrrGGGGGGrrrrrr"/>
+        <phase duration="3" state="yyyyyyrrrrrryyyyyyrrrrrr"/>
+        <phase duration="5000" state="rrrrrrGGGGGGrrrrrrGGGGGG"/>
+        <phase duration="3" state="rrrrrryyyyyyrrrrrryyyyyy"/>
+    </tlLogic>
 
     <junction id="A1" type="dead_end" x="0.00" y="100.00" incLanes="B1A1_0 B1A1_1 B1A1_2 B1A1_3" intLanes="" shape="0.00,100.00 0.00,112.80 0.00,100.00"/>
     <junction id="B0" type="dead_end" x="100.00" y="0.00" incLanes="B1B0_0 B1B0_1 B1B0_2 B1B0_3" intLanes="" shape="100.00,0.00 87.20,0.00 100.00,0.00"/>

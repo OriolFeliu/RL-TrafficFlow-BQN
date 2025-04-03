@@ -22,23 +22,24 @@ if __name__ == '__main__':
 
     # HYPERPARAMETHERS
     # Training
-    N_EPISODES = TRAINING["n_episodes"]
-    MAX_STEPS = TRAINING["max_steps"]
-    BATCH_SIZE = TRAINING["batch_size"]
-    GAMMA = TRAINING["gamma"]
-    LR = TRAINING["lr"]
-    TARGET_UPDATE = TRAINING["target_update"]
-    BUFFER_SIZE = TRAINING["buffer_size"]
-    N_CARS = TRAINING["n_cars"]
-    EPSILON_START = TRAINING["epsilon_start"]
-    EPSILON_END = TRAINING["epsilon_end"]
-    EPSILON_DECAY = TRAINING["epsilon_decay"]
+    N_EPISODES = TRAINING['n_episodes']
+    MAX_STEPS = TRAINING['max_steps']
+    BATCH_SIZE = TRAINING['batch_size']
+    GAMMA = TRAINING['gamma']
+    LR = TRAINING['lr']
+    HIDDEN_SIZE = TRAINING['hidden_size']
+    TARGET_UPDATE = TRAINING['target_update']
+    BUFFER_SIZE = TRAINING['buffer_size']
+    N_CARS = TRAINING['n_cars']
+    EPSILON_START = TRAINING['epsilon_start']
+    EPSILON_END = TRAINING['epsilon_end']
+    EPSILON_DECAY = TRAINING['epsilon_decay']
 
     # Environment
-    STATE_SIZE = ENV["state_size"]
-    ACTION_SIZE = ENV["action_size"]
-    GREEN_DURATION = ENV["green_duration"]
-    YELLOW_DURATION = ENV["yellow_duration"]
+    STATE_SIZE = ENV['state_size']
+    ACTION_SIZE = ENV['action_size']
+    GREEN_DURATION = ENV['green_duration']
+    YELLOW_DURATION = ENV['yellow_duration']
     N_INTERSECTIONS = ENV['n_branches']
     MAP_NAME = ENV['map_name']
 
@@ -53,7 +54,7 @@ if __name__ == '__main__':
     env = Environment(sumo_cmd, MAX_STEPS, N_INTERSECTIONS, N_CARS,
                       GREEN_DURATION, YELLOW_DURATION, MAP_NAME)
     agent = BQNAgent(STATE_SIZE, ACTION_SIZE, N_INTERSECTIONS, EPSILON_START,
-                     EPSILON_END, EPSILON_DECAY, LR, GAMMA)
+                     EPSILON_END, EPSILON_DECAY, HIDDEN_SIZE, LR, GAMMA)
     replay_buffer = ReplayBuffer(N_INTERSECTIONS, BUFFER_SIZE)
 
     total_rewards = []
@@ -70,7 +71,7 @@ if __name__ == '__main__':
         while not done:
             # Get action and step environment
             action = agent.act(state)
-            # action = [0, 0, 0, 0]
+
             next_state, reward, done = env.step(action)
 
             # Store experience

@@ -4,25 +4,25 @@ import torch.nn.functional as F
 
 # BQN Network
 class BQN(nn.Module):
-    def __init__(self, state_size, action_size, n_branches):
+    def __init__(self, state_size, action_size, n_branches, hidden_size):
         super().__init__()
 
         self.n_branches = n_branches
 
         # Shared layers (the trunk)
-        self.shared_fc1 = nn.Linear(state_size, 512)
-        self.shared_fc2 = nn.Linear(512, 256)
+        self.shared_fc1 = nn.Linear(state_size, hidden_size)
+        self.shared_fc2 = nn.Linear(hidden_size, int(hidden_size/2))
 
         # Value branch
-        self.value_fc = nn.Linear(256, 128)
-        self.value_out = nn.Linear(128, 1)
+        self.value_fc = nn.Linear(int(hidden_size/2), int(hidden_size/4))
+        self.value_out = nn.Linear(int(hidden_size/4), 1)
 
         # Create a branch (head) for each action branch
         self.advantage_streams = nn.ModuleList([
             nn.Sequential(
-                nn.Linear(256, 128),
+                nn.Linear(int(hidden_size/2), int(hidden_size/4)),
                 nn.ReLU(),
-                nn.Linear(128, action_size)
+                nn.Linear(int(hidden_size/4), action_size)
             )
             for _ in range(n_branches)
         ])

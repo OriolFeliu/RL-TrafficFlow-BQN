@@ -24,9 +24,8 @@ class BQNAgent(BaseAgent):
 
         # Q-Network and target network
         state_size = state_size * n_branches
-        self.model = BQN(state_size, action_size, n_branches).to(self.device)
-        self.target_model = BQN(state_size, action_size,
-                                n_branches,).to(self.device)
+        self.model = BQN(state_size, action_size, n_branches, hidden_size).to(self.device)
+        self.target_model = BQN(state_size, action_size, n_branches, hidden_size).to(self.device)
         self.update_target_model()  # initialize target network
 
         self.optimizer = optim.Adam(self.model.parameters(), lr=lr)

@@ -8,15 +8,6 @@ import math
 import subprocess
 
 # TL phase codes
-# PHASE_NS_GREEN = 0  # action 0 code 00
-# PHASE_NS_YELLOW = 1
-# PHASE_NSL_GREEN = 2  # action 1 code 01
-# PHASE_NSL_YELLOW = 3
-# PHASE_EW_GREEN = 4  # action 2 code 10
-# PHASE_EW_YELLOW = 5
-# PHASE_EWL_GREEN = 6  # action 3 code 11
-# PHASE_EWL_YELLOW = 7
-
 PHASE_NS_GREEN = 0  # action 0 code 00
 PHASE_NS_YELLOW = 1
 PHASE_EW_GREEN = 2  # action 1 code 01
@@ -93,8 +84,6 @@ class Environment:
                 self.phases[branch] = 'yellow'
                 self.old_action[branch] = action_branch
                 self.current_phase_steps[branch] = 0
-            # elif self.old_action[branch] == action_branch: #########################################
-            #     self.set_green_phase(self.old_action[branch], tl_id)
             elif phase == 'yellow' and steps >= self.yellow_duration:
                 self.set_green_phase(old_action_branch, tl_id)
                 self.phases[branch] = 'green'
@@ -106,7 +95,6 @@ class Environment:
         self.current_step += 1
 
         next_state = self.get_queue_length_state()
-        # reward = self.get_queue_length_reward(next_state)
         reward = self.get_queue_waiting_time_reward()
 
         self.done = (self.current_step >= self.max_steps) or (
@@ -116,16 +104,6 @@ class Environment:
             traci.close()
 
         return next_state, reward, self.done
-
-    # def get_queue_length_reward_prev(self):
-    #     halt_N = traci.edge.getLastStepHaltingNumber('N2TL')
-    #     halt_S = traci.edge.getLastStepHaltingNumber('S2TL')
-    #     halt_E = traci.edge.getLastStepHaltingNumber('E2TL')
-    #     halt_W = traci.edge.getLastStepHaltingNumber('W2TL')
-
-    #     queue_length = halt_N + halt_S + halt_E + halt_W
-
-    #     return -queue_length
 
     def get_queue_length_reward(self, next_state):
         queue_length = np.sum(next_state)
@@ -141,9 +119,10 @@ class Environment:
 
         return -total_waiting_time
 
-    def get_queue_length_waiting_time_reward(self):
+    def get_queue_length_waiting_time_reward(self, next_state):
         # can use exp to emphasize time
-        reward = self.get_queue_length_reward() * self.get_queue_waiting_time_reward()
+        reward = self.get_queue_length_reward(
+            next_state) * self.get_queue_waiting_time_reward()
 
         return -reward
 
@@ -166,20 +145,12 @@ class Environment:
             traci.trafficlight.setPhase(tl_id, PHASE_NS_GREEN)
         elif action_branch == 1:
             traci.trafficlight.setPhase(tl_id, PHASE_EW_GREEN)
-        # elif action_branch == 2:
-        #     traci.trafficlight.setPhase(tl_id, PHASE_EW_GREEN)
-        # elif action_branch == 3:
-        #     traci.trafficlight.setPhase(tl_id, PHASE_EWL_GREEN)
 
     def set_yellow_phase(self, old_action_branch, tl_id):
         if old_action_branch == 0:
             traci.trafficlight.setPhase(tl_id, PHASE_NS_YELLOW)
         elif old_action_branch == 1:
             traci.trafficlight.setPhase(tl_id, PHASE_EW_YELLOW)
-        # elif self.old_action[branch] == 2:
-        #     traci.trafficlight.setPhase(tl_id, PHASE_EW_YELLOW)
-        # elif self.old_action[branch] == 3:
-        #     traci.trafficlight.setPhase(tl_id, PHASE_EWL_YELLOW)
 
     def run_simulation_steps(self, n_steps):
         while n_steps > 0:
@@ -198,19 +169,7 @@ class Environment:
 
     def generate_routefile(self):
         insertion_rate = self.n_cars / (self.max_steps / 3600)
-        period = self.max_steps / self.n_cars
-
-        # command = [
-        #     'python', 'C:/Program Files (x86)/Eclipse/Sumo/tools/randomTrips.py',
-        #     '-n', self.map_name,
-        #     '-o', 'data/route/randomTrips.rou.xml',
-        #     '-b', '0', '-e', str(self.max_steps), '-p', '1.0',
-        #     '--binomial', '4', '--min-distance', '500',
-        #     '--insertion-rate', str(random_depart),
-        #     '--fringe-factor', '1.5', '--speed-exponent', '1.0', '-L',
-        #     '--vehicle-class', 'passenger', '--trip-attributes', 'type=\"passenger\"',
-        #     '--seed', '1234', '--validate', '--maxtries',  '200'
-        # ]
+        period = (self.max_steps * 0.8) / self.n_cars
 
         command = [
             'python', "C:/Program Files (x86)/Eclipse/Sumo/tools/randomTrips.py",
@@ -218,7 +177,7 @@ class Environment:
             '-b', '0', '-e', str(self.max_steps),
             '--seed', str(self.seed),
             '--validate',
-            # '--period', str(period),
+            '--period', str(period),
             # '--insertion-rate', str(insertion_rate),  '--random-depart',
             # '--maxtries', str(self.n_cars),
             '--allow-fringe', '--fringe-factor', 'max',

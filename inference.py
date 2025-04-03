@@ -24,6 +24,7 @@ if __name__ == '__main__':
     N_EPISODES = TRAINING['n_episodes']
     MAX_STEPS = TRAINING['max_steps']
     N_CARS = TRAINING['n_cars']
+    HIDDEN_SIZE = TRAINING['hidden_size']
     STATE_SIZE = ENV['state_size']
     ACTION_SIZE = ENV['action_size']
     GREEN_DURATION = ENV['green_duration']
@@ -43,7 +44,7 @@ if __name__ == '__main__':
 
     env = Environment(sumo_cmd, MAX_STEPS, N_INTERSECTIONS, N_CARS,
                       GREEN_DURATION, YELLOW_DURATION, MAP_NAME)
-    agent = BQNAgent(STATE_SIZE, ACTION_SIZE, N_INTERSECTIONS, EPSILON_START)
+    agent = BQNAgent(STATE_SIZE, ACTION_SIZE, N_INTERSECTIONS, EPSILON_START, hidden_size=HIDDEN_SIZE)
 
     model_path = f'model/bqn_{N_INTERSECTIONS}inter_{N_EPISODES}ep_model.pth'
     agent.load_model(model_path)

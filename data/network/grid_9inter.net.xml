@@ -742,57 +742,57 @@
     </tlLogic> -->
 
     <tlLogic id="B1" type="static" programID="0" offset="0">
-        <phase duration="1000" state="GGGGGGrrrrrrGGGGGGrrrrrr"/>
+        <phase duration="5000" state="GGGGGGrrrrrrGGGGGGrrrrrr"/>
         <phase duration="3"  state="yyyyyyrrrrrryyyyyyrrrrrr"/>
-        <phase duration="1000" state="rrrrrrGGGGGGrrrrrrGGGGGG"/>
+        <phase duration="5000" state="rrrrrrGGGGGGrrrrrrGGGGGG"/>
         <phase duration="3"  state="rrrrrryyyyyyrrrrrryyyyyy"/>
     </tlLogic>
     <tlLogic id="B2" type="static" programID="0" offset="0">
-        <phase duration="1000" state="GGGGGGrrrrrrGGGGGGrrrrrr"/>
+        <phase duration="5000" state="GGGGGGrrrrrrGGGGGGrrrrrr"/>
         <phase duration="3"  state="yyyyyyrrrrrryyyyyyrrrrrr"/>
-        <phase duration="1000" state="rrrrrrGGGGGGrrrrrrGGGGGG"/>
+        <phase duration="5000" state="rrrrrrGGGGGGrrrrrrGGGGGG"/>
         <phase duration="3"  state="rrrrrryyyyyyrrrrrryyyyyy"/>
     </tlLogic>
     <tlLogic id="B3" type="static" programID="0" offset="0">
-        <phase duration="1000" state="GGGGGGrrrrrrGGGGGGrrrrrr"/>
+        <phase duration="5000" state="GGGGGGrrrrrrGGGGGGrrrrrr"/>
         <phase duration="3"  state="yyyyyyrrrrrryyyyyyrrrrrr"/>
-        <phase duration="1000" state="rrrrrrGGGGGGrrrrrrGGGGGG"/>
+        <phase duration="5000" state="rrrrrrGGGGGGrrrrrrGGGGGG"/>
         <phase duration="3"  state="rrrrrryyyyyyrrrrrryyyyyy"/>
     </tlLogic>
     <tlLogic id="C1" type="static" programID="0" offset="0">
-        <phase duration="1000" state="GGGGGGrrrrrrGGGGGGrrrrrr"/>
+        <phase duration="5000" state="GGGGGGrrrrrrGGGGGGrrrrrr"/>
         <phase duration="3"  state="yyyyyyrrrrrryyyyyyrrrrrr"/>
-        <phase duration="1000" state="rrrrrrGGGGGGrrrrrrGGGGGG"/>
+        <phase duration="5000" state="rrrrrrGGGGGGrrrrrrGGGGGG"/>
         <phase duration="3"  state="rrrrrryyyyyyrrrrrryyyyyy"/>
     </tlLogic>
     <tlLogic id="C2" type="static" programID="0" offset="0">
-        <phase duration="1000" state="GGGGGGrrrrrrGGGGGGrrrrrr"/>
+        <phase duration="5000" state="GGGGGGrrrrrrGGGGGGrrrrrr"/>
         <phase duration="3"  state="yyyyyyrrrrrryyyyyyrrrrrr"/>
-        <phase duration="1000" state="rrrrrrGGGGGGrrrrrrGGGGGG"/>
+        <phase duration="5000" state="rrrrrrGGGGGGrrrrrrGGGGGG"/>
         <phase duration="3"  state="rrrrrryyyyyyrrrrrryyyyyy"/>
     </tlLogic>
     <tlLogic id="C3" type="static" programID="0" offset="0">
-        <phase duration="500" state="GGGGGGrrrrrrGGGGGGrrrrrr"/>
+        <phase duration="5000" state="GGGGGGrrrrrrGGGGGGrrrrrr"/>
         <phase duration="3"  state="yyyyyyrrrrrryyyyyyrrrrrr"/>
-        <phase duration="500" state="rrrrrrGGGGGGrrrrrrGGGGGG"/>
+        <phase duration="5000" state="rrrrrrGGGGGGrrrrrrGGGGGG"/>
         <phase duration="3"  state="rrrrrryyyyyyrrrrrryyyyyy"/>
     </tlLogic>
     <tlLogic id="D1" type="static" programID="0" offset="0">
-        <phase duration="500" state="GGGGGGrrrrrrGGGGGGrrrrrr"/>
+        <phase duration="5000" state="GGGGGGrrrrrrGGGGGGrrrrrr"/>
         <phase duration="3"  state="yyyyyyrrrrrryyyyyyrrrrrr"/>
-        <phase duration="500" state="rrrrrrGGGGGGrrrrrrGGGGGG"/>
+        <phase duration="5000" state="rrrrrrGGGGGGrrrrrrGGGGGG"/>
         <phase duration="3"  state="rrrrrryyyyyyrrrrrryyyyyy"/>
     </tlLogic>
     <tlLogic id="D2" type="static" programID="0" offset="0">
-        <phase duration="500" state="GGGGGGrrrrrrGGGGGGrrrrrr"/>
+        <phase duration="5000" state="GGGGGGrrrrrrGGGGGGrrrrrr"/>
         <phase duration="3"  state="yyyyyyrrrrrryyyyyyrrrrrr"/>
-        <phase duration="500" state="rrrrrrGGGGGGrrrrrrGGGGGG"/>
+        <phase duration="5000" state="rrrrrrGGGGGGrrrrrrGGGGGG"/>
         <phase duration="3"  state="rrrrrryyyyyyrrrrrryyyyyy"/>
     </tlLogic>
     <tlLogic id="D3" type="static" programID="0" offset="0">
-        <phase duration="500" state="GGGGGGrrrrrrGGGGGGrrrrrr"/>
+        <phase duration="5000" state="GGGGGGrrrrrrGGGGGGrrrrrr"/>
         <phase duration="3"  state="yyyyyyrrrrrryyyyyyrrrrrr"/>
-        <phase duration="500" state="rrrrrrGGGGGGrrrrrrGGGGGG"/>
+        <phase duration="5000" state="rrrrrrGGGGGGrrrrrrGGGGGG"/>
         <phase duration="3"  state="rrrrrryyyyyyrrrrrryyyyyy"/>
     </tlLogic>
 

@@ -11,8 +11,6 @@ if __name__ == '__main__':
     SEED = 1234
     random.seed(SEED)
     np.random.seed(SEED)
-    torch.manual_seed(42)
-    torch.cuda.manual_seed(42)
 
     print('CYCLIC SIMULATION')
 
