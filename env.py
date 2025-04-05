@@ -73,37 +73,56 @@ class Environment:
         return state
 
     def step(self, action):
+        # self.run_simulation_steps(action)
         for branch, tl_id in enumerate(self.tl_ids):
             phase = self.phases[branch]
-            steps = self.current_phase_steps[branch]
             action_branch = action[branch]
             old_action_branch = self.old_action[branch]
 
-            if phase == 'green' and steps >= self.green_duration and self.old_action[branch] != action_branch:
+            if phase == 'green' and self.old_action[branch] != action_branch:
                 self.set_yellow_phase(old_action_branch, tl_id)
                 self.phases[branch] = 'yellow'
                 self.old_action[branch] = action_branch
-                self.current_phase_steps[branch] = 0
-            elif phase == 'yellow' and steps >= self.yellow_duration:
-                self.set_green_phase(old_action_branch, tl_id)
-                self.phases[branch] = 'green'
-                self.current_phase_steps[branch] = 0
 
-        traci.simulationStep()
-        self.total_arrived_vehicles += traci.simulation.getArrivedNumber()
-        self.current_phase_steps += 1
-        self.current_step += 1
+        self.done = self.run_simulation_steps(self.yellow_duration)
+
+        if not self.done:
+            for branch, tl_id in enumerate(self.tl_ids):
+                phase = self.phases[branch]
+                old_action_branch = self.old_action[branch]
+
+                if phase == 'yellow':
+                    self.set_green_phase(old_action_branch, tl_id)
+                    self.phases[branch] = 'green'
+
+            self.done = self.run_simulation_steps(self.green_duration)
+
+        # self.current_phase_steps += 1
+        # self.current_step += 1
 
         next_state = self.get_queue_length_state()
         reward = self.get_queue_waiting_time_reward()
-
-        self.done = (self.current_step >= self.max_steps) or (
-            self.total_arrived_vehicles >= self.n_cars)
+        # reward =self.get_queue_length_reward(next_state)
+        # reward = self.get_arrived_cars_reward()
 
         if self.done:
             traci.close()
 
         return next_state, reward, self.done
+
+    def run_simulation_steps(self, duration):
+        n_steps = duration
+        while n_steps > 0:
+            traci.simulationStep()
+            self.total_arrived_vehicles += traci.simulation.getArrivedNumber()
+            self.current_step += 1
+
+            if (self.current_step >= self.max_steps) or (self.total_arrived_vehicles >= self.n_cars):
+                return True
+
+            n_steps -= 1
+
+        return False
 
     def get_queue_length_reward(self, next_state):
         queue_length = np.sum(next_state)
@@ -114,7 +133,7 @@ class Environment:
         total_waiting_time = 0.0
         for veh_id in traci.vehicle.getIDList():
             # Check if the vehicle is halted
-            if traci.vehicle.getSpeed(veh_id) < 0.01:
+            if traci.vehicle.getSpeed(veh_id) < 0.1:
                 total_waiting_time += traci.vehicle.getWaitingTime(veh_id)
 
         return -total_waiting_time
@@ -123,6 +142,15 @@ class Environment:
         # can use exp to emphasize time
         reward = self.get_queue_length_reward(
             next_state) * self.get_queue_waiting_time_reward()
+
+        return -reward
+
+    def get_arrived_cars_reward(self):
+        # can use exp to emphasize time
+        reward = (self.n_cars - self.total_arrived_vehicles) * -1
+
+        if self.total_arrived_vehicles == self.n_cars:
+            reward += 10
 
         return -reward
 
@@ -152,23 +180,7 @@ class Environment:
         elif old_action_branch == 1:
             traci.trafficlight.setPhase(tl_id, PHASE_EW_YELLOW)
 
-    def run_simulation_steps(self, n_steps):
-        while n_steps > 0:
-            traci.simulationStep()
-            self.total_arrived_vehicles += traci.simulation.getArrivedNumber()
-            self.current_step += 1
-
-            if (self.current_step >= self.max_steps) or (self.total_arrived_vehicles >= self.n_cars):
-                return True
-
-            n_steps -= 1
-
-        return False
-
-        # TODO calculate reward while waiting for green
-
     def generate_routefile(self):
-        insertion_rate = self.n_cars / (self.max_steps / 3600)
         period = (self.max_steps * 0.8) / self.n_cars
 
         command = [
@@ -178,12 +190,9 @@ class Environment:
             '--seed', str(self.seed),
             '--validate',
             '--period', str(period),
-            # '--insertion-rate', str(insertion_rate),  '--random-depart',
-            # '--maxtries', str(self.n_cars),
             '--allow-fringe', '--fringe-factor', 'max',
             '--trip-attributes', 'departSpeed="10.0"'
         ]
-        # python "C:\Program Files (x86)\Eclipse\Sumo\tools\randomTrips.py" -n "data/network/grid_4inter.net.xml"  -o data/route/randomTrips.rou.xml -e 5400 --seed 1234 --trip-attributes="departSpeed='10.0'"
 
         subprocess.run(command, capture_output=True, text=True)
 

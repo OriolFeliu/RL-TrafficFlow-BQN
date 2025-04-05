@@ -32,7 +32,7 @@ if __name__ == '__main__':
     N_INTERSECTIONS = ENV['n_branches']
     MAP_NAME = ENV['map_name']
 
-    n_simulations = 5
+    n_simulations = 10
 
     sumoBinary = checkBinary('sumo')
     sumo_cmd = [

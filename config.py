@@ -1,16 +1,16 @@
 TRAINING = {
-    'n_episodes': 500,
-    'max_steps': 5000,
-    'n_cars': 200,
+    'n_episodes': 200,
+    'max_steps': 3600,
+    'n_cars': 500,
     'batch_size': 64,
-    'hidden_size': 128,
-    'gamma': 0.9,
+    'hidden_size': 64,
+    'gamma': 0.8,
     'lr': 1e-3,
     'target_update': 10,
     'buffer_size': 2000,
     'epsilon_start': 1.0,
-    'epsilon_end': 0.01,
-    'epsilon_decay': 0.995
+    'epsilon_end': 0.1,
+    'epsilon_decay': 0.99
 }
 
 ENV = {
