@@ -145,15 +145,6 @@ class Environment:
 
         return -reward
 
-    def get_arrived_cars_reward(self):
-        # can use exp to emphasize time
-        reward = (self.n_cars - self.total_arrived_vehicles) * -1
-
-        if self.total_arrived_vehicles == self.n_cars:
-            reward += 10
-
-        return -reward
-
     def get_queue_length_state(self):
         n_edges = len(self.incoming_edges[0])
 
