@@ -54,6 +54,27 @@ Traditional Q-learning struggles with multi-dimensional discrete action spaces d
 
 In this project, each branch controls one traffic light intersection, enabling scalable multi-intersection learning without inflating the action space.
 
+### State Representation
+
+The state vector captures real-time traffic conditions at the intersection and is defined as:
+
+- **Vehicle Queue Lengths**: The number of halted vehicles per lane, aggregated across all incoming lanes  
+  \( L = \{l_1, l_2, \ldots, l_n\} \).
+
+---
+
+### Action Space
+
+The action space \( A \) defines the set of admissible traffic light phases:
+
+- **Phase 0 (North-South)**: Green signal for straight and right-turning movements  
+- **Phase 1 (East-West)**: Green signal for straight and right-turning movements
+
+These phases are subject to the following operational constraints to ensure compliance with traffic engineering standards:
+
+- A **minimum green time duration** of **10 seconds**.  
+- A **minimum yellow time duration** of **3 seconds**.
+
 
 ## Results
 ### Fixed-Time vs BDQ Control  
@@ -74,6 +95,11 @@ improvement, while the waiting time is reduced to 10.16 seconds, achieving an 88
 provement. Throughput increases from 332 to 366, a 10.24% improvement. This substantial
 reduction in both queue length and waiting time in a larger, more complex network reinforces
 the potential of the BDQ approach to significantly improve traffic flow and reduce delays.
+
+---
+
+[Watch this 1-minute video](https://www.youtube.com/watch?v=UFfd9yIV97k&ab_channel=Baki) comparing traditional fixed-time traffic signal control with the Branching Dueling Q-Network (BDQ) approach. The video highlights the differences in traffic flow efficiency and responsiveness between the two methods.
+
 
 ## License
 This project is licensed under the MIT License.
