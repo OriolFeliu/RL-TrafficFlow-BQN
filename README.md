@@ -59,9 +59,8 @@ In this project, each branch controls one traffic light intersection, enabling s
 The state vector captures real-time traffic conditions at the intersection and is defined as:
 
 - **Vehicle Queue Lengths**: The number of halted vehicles per lane, aggregated across all incoming lanes  
-  \( L = \{l_1, l_2, \ldots, l_n\} \).
+  \( L = \{l_1, l_2, ..., l_n\} \).
 
----
 
 ### Action Space
 
@@ -95,8 +94,6 @@ improvement, while the waiting time is reduced to 10.16 seconds, achieving an 88
 provement. Throughput increases from 332 to 366, a 10.24% improvement. This substantial
 reduction in both queue length and waiting time in a larger, more complex network reinforces
 the potential of the BDQ approach to significantly improve traffic flow and reduce delays.
-
----
 
 [Watch this 1-minute video](https://www.youtube.com/watch?v=UFfd9yIV97k&ab_channel=Baki) comparing traditional fixed-time traffic signal control with the Branching Dueling Q-Network (BDQ) approach. The video highlights the differences in traffic flow efficiency and responsiveness between the two methods.
 
